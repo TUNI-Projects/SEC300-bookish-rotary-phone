@@ -11,4 +11,4 @@ int main(int argc, char const *argv[])
     return 0;
 }
 
-// example command: ./t5 "hello world %s%s%s%"
+// example command: ./t5 "hello world %s%s%s% "

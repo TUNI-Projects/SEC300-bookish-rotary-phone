@@ -1,12 +1,12 @@
 #include <stdio.h>
 /**
- * Write a progam that causes unlimited buffer overflow
+ * Write a programme that causes unlimited buffer overflow
  */
 
 int main(int argc, char *argv[])
 {
-    printf("Enter 5 character: ");
-    char input[5];
+    printf("Enter 3 characters:");
+    char input[3];
     gets(input);
     char *bar = input;
     printf("Result: %s", bar);
