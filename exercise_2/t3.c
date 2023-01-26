@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 /**
- * Code Reference:
+ * Code Reference
  * https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/rand-s?view=msvc-170
  * The rand_s function uses the operating system to generate cryptographically secure random numbers.
  * rand_s not available in swift, uses arc4random instead.
