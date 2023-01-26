@@ -15,13 +15,21 @@ int main()
     FILE *file;
     file = fopen("t3_data.txt", "w");
 
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 15; i++)
     {
         number = arc4random();
-        printf("%u \n", number);
         fprintf(file, "%u", number);
     }
 
     fclose(file);
+    file = fopen("t3_data.txt", "r");
+
+    int number_of_char = 0;
+    for (char c = getc(file); c != EOF; c = getc(file))
+    {
+        // Increment count for this character
+        number_of_char += 1;
+    }
+    printf("\nNumber of char: %d\n", number_of_char);
     return 0;
 }
