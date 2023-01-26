@@ -57,3 +57,5 @@ dkms.conf
 # REMOVE MakeFile
 Makefile
 *.dSYM
+.DS_Store
+*.zip

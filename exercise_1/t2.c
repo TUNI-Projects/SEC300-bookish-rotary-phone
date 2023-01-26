@@ -7,8 +7,15 @@
 int main(int argc, char *argv[])
 {
     printf("Off-by-one buffer overflow | out of bounds overflow \n");
-    int arr[1];
-    arr[0] = 1;
-    arr[1] = 2;
+    char arr[10];
+    for (int i = 0; i < 12; i++)
+    {
+        arr[i] = 'A';
+    }
+
+    for (int i = 0; i < 12; i++)
+    {
+        printf("%d - > Result: %c - %x\n", i, arr[i], arr[i]);
+    }
     return 0;
 }
