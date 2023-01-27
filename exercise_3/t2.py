@@ -36,13 +36,13 @@ class T2:
                     return line.split(" ")[1]
             return None
 
-    def login(self) -> bool:
+    def login(self) -> tuple:
         """_summary_
         basic authenticatioN!
         this func will be used to enc/dec in task 3.
         
         Returns:
-            bool: for t3
+            (bool, str): for t3
         """
         print("Dummy user authentication")
         username = input("username >> ")
@@ -51,18 +51,18 @@ class T2:
         # username sanitation, [a-zA-Z0-9]
         if not re.match("^[A-Za-z0-9]*$", username):
             print("Invalid Username")
-            return False
+            return False, None
 
         hashed_password = self.check_if_exist(username)
         if hashed_password is None:
             print("Invalid Username!")
-            return False
+            return False, None
         if bcrypt.checkpw(password.encode(), hashed_password.encode()):
             print("Password matched! User authenticated. :)")
-            return True
+            return True, username
         else:
             print("Incorrect password!")
-            return False
+            return False, None
 
     def register(self)-> None:
         """

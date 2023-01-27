@@ -2,11 +2,11 @@ autopep8==2.0.1
 bcrypt==4.0.1
 certifi==2022.12.7
 charset-normalizer==3.0.1
-crypto==1.4.1
 idna==3.4
 lipsum==0.1.2
 Naked==0.1.32
 pycodestyle==2.10.0
+pycryptodome==3.16.0
 PyYAML==6.0
 requests==2.28.2
 shellescape==3.8.1
