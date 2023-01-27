@@ -59,3 +59,4 @@ Makefile
 *.dSYM
 .DS_Store
 *.zip
+*.data
