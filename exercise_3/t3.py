@@ -12,6 +12,7 @@ class T3:
         self.FILENAME = "lipsum.data"
         self.ENCRYPTED_FILE = "encrypted_data.data"
         self.DECRYPTED_FILE = "decrypted_data.data"
+        
         self.ENCRYPTION_INFO = "encryption_database.data"
 
     def generate_lipsum(self) -> None:
@@ -54,7 +55,7 @@ class T3:
             
             with open(self.ENCRYPTION_INFO, "wb") as encrpt_info_file:
                 # will only store last encryption information
-                encrpt_info_file.write(line.encode())
+                encrpt_info_file.write(line)
             print("File Encrypted Successfully!")            
             
     
@@ -92,12 +93,16 @@ class T3:
             nonce = nonce.encode()
             tag = tag.encode()
             
+            print(key)
+            print(nonce)
+            print(tag)    
+            
             cipher = AES.new(key.encode(), AES.MODE_EAX, nonce=nonce)
             plaintext = cipher.decrypt(encrypted_text)
-            print(plaintext)
+            
             try:
                 cipher.verify(tag)
-                print("Encrypted successfully!")
+                print("Decrypted successfully!")
                 with open(self.DECRYPTED_FILE, "w") as decrypt_file:
                     decrypt_file.write(plaintext)
             except ValueError:
