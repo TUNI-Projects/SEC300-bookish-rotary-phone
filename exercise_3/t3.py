@@ -1,4 +1,6 @@
 import lipsum
+import hashlib
+
 from t2 import T2
 from cryptography.fernet import Fernet, InvalidToken
 
@@ -21,6 +23,32 @@ class T3:
             # this will create a file if not exist
             data = lipsum.generate_paragraphs(10)
             file.writelines(data)
+    
+    def sha_check(self) -> None:
+        """
+        match sha with the decrypted file against the lipsum file
+        """
+        sha1 = hashlib.sha1()
+        original_file_hash = None
+        decrypted_file_hash = None
+        
+        with open(self.FILENAME, 'r') as file:
+            data = file.read()
+            sha1.update(data.encode())
+            original_file_hash = sha1.hexdigest()
+        
+        sha1 = hashlib.sha1()
+        with open(self.DECRYPTED_FILE, 'r') as file:
+            data = file.read()
+            sha1.update(data.encode())
+            decrypted_file_hash = sha1.hexdigest()
+        
+        print("original ", original_file_hash)
+        print("decrypted ",decrypted_file_hash)
+        
+        print("SHA Matched!" if original_file_hash == decrypted_file_hash else "SHA didn't Matched!")
+            
+        
 
     def encrypt(self):
         """
@@ -111,20 +139,19 @@ class T3:
         """
         main func
         """
-        while (True):
-            choice = input("Type 1 for encrypt, Type 2 for decrypt >> ")
+        choice = input("Type 1 for encrypt, Type 2 for decrypt, Type 3 for SHA Check >> ")
             
-            if choice == "1":
-                self.generate_lipsum()
-                self.encrypt()
-                break
-            elif choice == "2":
-                self.decrypt()
-                break
-            else:
-                print("Wrong choice: {}. Try again!".format(choice))
-                break
+        if choice == "1":
+            self.generate_lipsum()
+            self.encrypt()
+        elif choice == "2":
+            self.decrypt()
+        elif choice == "3":
+            self.sha_check()
+        else:
+            print("Wrong choice: {}. Try again!".format(choice))
 
+            
 
 if __name__ == "__main__":
     T3().main()
