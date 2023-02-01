@@ -1,19 +1,16 @@
 import lipsum
-from datetime import datetime
 from t2 import T2
-from Crypto.Cipher import AES
+from cryptography.fernet import Fernet, InvalidToken
 
 
 class T3:
 
     def __init__(self) -> None:
         self.t2 = T2()
-        self.NOW = datetime.now()
         self.FILENAME = "lipsum.data"
         self.ENCRYPTED_FILE = "encrypted_data.data"
         self.DECRYPTED_FILE = "decrypted_data.data"
-        
-        self.ENCRYPTION_INFO = "encryption_database.data"
+        self.ENCRYPTION_INFO = "super_secure_database.txt"
 
     def generate_lipsum(self) -> None:
         """
@@ -39,24 +36,25 @@ class T3:
             return
         
         with open(self.FILENAME, 'r') as file:
-            everything = file.read()
-            key = input("Secret Encryption key: ")
-            if len(key) != 16:
-                print("Key must be 16 chars")
-                return
-            cipher = AES.new(key.encode(), AES.MODE_EAX)
-            nonce = cipher.nonce
-            encrypted_data, tag = cipher.encrypt_and_digest(everything.encode())
-            with open(self.ENCRYPTED_FILE, "wb") as encrypted_file:
-                # write encrypted data on a file
-                encrypted_file.write(encrypted_data)
+            file_data = file.read()
             
-            line = "{} {} {}".format(username, nonce, tag)
+            # symmetric key 
+            key = Fernet.generate_key()
+            encrypted_data = Fernet(key).encrypt(file_data.encode())
             
-            with open(self.ENCRYPTION_INFO, "wb") as encrpt_info_file:
-                # will only store last encryption information
-                encrpt_info_file.write(line)
-            print("File Encrypted Successfully!")            
+            with open(self.ENCRYPTED_FILE, "wb") as encryption_file:
+                encryption_file.write(encrypted_data)
+            
+            with open(self.ENCRYPTION_INFO, "w") as super_secret_data:
+                try:
+                    super_secret_data.write("{} {}".format(username, key.decode())) # decode error
+                    print("----------------------------------")
+                    print("File Encrypted Successfully in {}".format(self.ENCRYPTED_FILE))
+                    print("----------------------------------")  
+                except AttributeError as ae:
+                    print(ae)
+                    print("Encryption failed! Error occurred!")
+                      
             
     
     def decrypt(self) -> None:
@@ -72,50 +70,60 @@ class T3:
             print("User authentication failed!")
             return
         
-        with open(self.ENCRYPTED_FILE, "rb") as file:
-            encrypted_text = file.read()
-            key = input("Secret Encryption key: ")
-            if len(key) != 16:
-                print("Key must be 16 chars.")
-                return
-            
-            nonce, tag = None, None
-            with open(self.ENCRYPTION_INFO, "rb") as encrpted_info:
-                secret_info = encrpted_info.read()
-                secret_info = secret_info.decode()
-                secret_info = secret_info.split(" ")
-                print(secret_info)
-                if secret_info[0] != username:
-                    print("decryption failed!")
-                    return
-                nonce, tag = secret_info[1], secret_info[2]
-            
-            nonce = nonce.encode()
-            tag = tag.encode()
-            
-            print(key)
-            print(nonce)
-            print(tag)    
-            
-            cipher = AES.new(key.encode(), AES.MODE_EAX, nonce=nonce)
-            plaintext = cipher.decrypt(encrypted_text)
+        secret_info = None
+        with open(self.ENCRYPTION_INFO, "r") as secret_data:
+            secret_info = secret_data.read()
+        
+        secret_info = secret_info.split(" ")
+        if secret_info [0] != username:
+            print("username not found in the secret database. Decryption failed!")
+            return
+
+        try:
+            key = secret_info[1].encode() # encode error
+        except AttributeError as ae:
+            print()
+            print("Decryption failed! Corrupted Key!")
+            return
+        
+        with open(self.ENCRYPTED_FILE, 'rb') as encrypted_file:
+            encrypted_message = encrypted_file.read()
             
             try:
-                cipher.verify(tag)
-                print("Decrypted successfully!")
-                with open(self.DECRYPTED_FILE, "w") as decrypt_file:
-                    decrypt_file.write(plaintext)
-            except ValueError:
-                print("Incorrect key or data corrupted!")
+                decrypted_message = Fernet(key).decrypt(encrypted_message).decode() # decode error
+            except InvalidToken as ie:
+                print()
+                print("Decryption failed! Corrupted Key")
+                return
+            except AttributeError as ae:
+                print()
+                print("Decryption failed! Error occurred!")
+                return
             
+            with open(self.DECRYPTED_FILE, 'w') as decrypted_file:
+                decrypted_file.write(decrypted_message)
+                print("----------------------------------")
+                print("Successfully decryption file into {}".format(self.DECRYPTED_FILE))
+                print("----------------------------------")
+                
     
     def main(self) -> None:
         """
         main func
         """
-        self.generate_lipsum()
-        self.encrypt()
-        self.decrypt()
+        while (True):
+            choice = input("Type 1 for encrypt, Type 2 for decrypt >> ")
+            
+            if choice == "1":
+                self.generate_lipsum()
+                self.encrypt()
+                break
+            elif choice == "2":
+                self.decrypt()
+                break
+            else:
+                print("Wrong choice: {}. Try again!".format(choice))
+                break
 
 
 if __name__ == "__main__":
