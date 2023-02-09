@@ -1,6 +1,9 @@
 /**
  * Implement a program that creates temp file
 How do you implement this as securely as possible?
+
+Reference: https://en.cppreference.com/w/c/io/tmpfile
+and https://www.geeksforgeeks.org/tmpfile-function-c/
 */
 
 #include <stdio.h>
