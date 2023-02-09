@@ -25,4 +25,4 @@ http://code.google.com/terms.html\
 
 3. [TODO] Stored XSS via AJAX
 
-4. [TODO] Reflected XSS via AJAX
+4. [Complete] Reflected XSS via AJAX > Updated _SendTemplateResponse to clean the entire params. 

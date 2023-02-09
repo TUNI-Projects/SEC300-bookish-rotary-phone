@@ -501,6 +501,16 @@ class GruyereRequestHandler(BaseHTTPRequestHandler):
       template = f.read()
     finally:
       if f: f.close()
+    
+    # _Log(params)
+    for key in params:
+      data = params[key]
+      new_item = []  
+      for item in data:
+        new_item.append(clean_html(item))
+      params[key] = new_item
+    # _Log(params)
+    
     self._SendHtmlResponse(
         gtl.ExpandTemplate(template, specials, params),
         new_cookie_text)
