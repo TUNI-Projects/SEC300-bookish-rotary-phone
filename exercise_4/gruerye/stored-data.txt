@@ -91,42 +91,46 @@ g34
 sS'snippets'
 p39
 (lp40
-S'</td <script>alert(1)</script>hello'
+S'all <span style=display:none>"\r\n+ (alert(1),"")\r\n+ "</span>your base'
 p41
-aS'<p <script>alert(1)</script>hello'
+aS'"""""""""""""""""""""""'
 p42
-aS'<a onmouseover="alert(1)" href="#">read this!</a>'
+aS'</td <script>alert(1)</script>hello'
 p43
-aS'<h1> hahahah <script> alert("h1"); </script>  </h1>'
+aS'<p <script>alert(1)</script>hello'
 p44
-asS'pw'
+aS'<a onmouseover="alert(1)" href="#">read this!</a>'
 p45
-S'juice'
+aS'<h1> hahahah <script> alert("h1"); </script>  </h1>'
 p46
-ssS'brie'
+asS'pw'
 p47
-(dp48
+S'juice'
+p48
+ssS'brie'
+p49
+(dp50
 g4
 S'I use the same password for all my accounts.'
-p49
+p51
 sg6
 S'Brie'
-p50
+p52
 sg8
 S'red; text-decoration:underline'
-p51
+p53
 sg10
 S'https://news.google.com/news/search?q=brie'
-p52
+p54
 sg12
 I00
 sg13
 I01
 sg14
-(lp53
+(lp55
 S'Brie is the queen of the cheeses<span style=color:red>!!!</span>'
-p54
+p56
 asg16
 S'briebrie'
-p55
+p57
 ss.
