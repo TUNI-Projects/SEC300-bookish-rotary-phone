@@ -21,9 +21,6 @@ __author__ = 'Bruce Leban'
 # system modules
 import re
 
-# user modules
-from lxml.html.clean import clean_html
-
 
 def SanitizeHtml(s):
   """Makes html safe for embedding in a document.
@@ -75,7 +72,6 @@ def _SanitizeTag(t):
   Returns:
     a safe tag.
   """
-  # return clean_html(t)
   allowed_tags = [
       'a', 'b', 'big', 'br', 'center', 'code', 'em', 'h1', 'h2', 'h3',
       'h4', 'h5', 'h6', 'hr', 'i', 'img', 'li', 'ol', 'p', 's', 'small',
@@ -85,7 +81,7 @@ def _SanitizeTag(t):
       'onblur', 'onchange', 'onclick', 'ondblclick', 'onfocus',
       'onkeydown', 'onkeypress', 'onkeyup', 'onload', 'onmousedown',
       'onmousemove', 'onmouseout', 'onmouseup', 'onreset',
-      'onselect', 'onsubmit', 'onunload', 'onmouseover', "script"
+      'onselect', 'onsubmit', 'onunload'
   ]
 
   # Extract the tag name and make sure it's allowed.
@@ -101,22 +97,5 @@ def _SanitizeTag(t):
   # This is a bit heavy handed but we want to be sure we don't
   # allow any to get through.
   for a in disallowed_attributes:
-    if a in t.lower():
-      t = t.replace(a, 'blocked')
+    t = t.replace(a, 'blocked')
   return t
-
-
-SAFE_COLOR_RE = re.compile(r"^#?[a-zA-Z0-9]*$")
-
-def _SanitizeColor(color):
-  """Sanitizes a color, returning 'invalid' if it's invalid.
-
-  A valid value is either the name of a color or # followed by the
-  hex code for a color (like #FEFFFF). Returning an invalid value
-  value allows a style sheet to specify a default value by writing
-  'color:default; color:{{foo:color}}'.
-  """
-
-  if SAFE_COLOR_RE.match(color):
-    return color
-  return 'invalid'
