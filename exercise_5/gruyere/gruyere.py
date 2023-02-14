@@ -599,6 +599,29 @@ class GruyereRequestHandler(BaseHTTPRequestHandler):
     # global cookie_secret; only use positive hash values
     h_data = str(hash(cookie_secret + c_data) & 0x7FFFFFF)
     c_text = '%s=%s|%s; path=/' % (cookie_name, h_data, c_data)
+    
+    # ----------------------
+    # my stuff
+    import json
+    super_secret = {}
+    with open('super_secret.json', 'r') as secret_database:
+      # Reading COOKIE data from json file
+      super_secret = json.load(secret_database)
+  
+    import hashlib
+    sha256 = hashlib.sha256()
+    hash_data = b'%s|%s|%s' % (uid, is_admin, is_author)
+    sha256.update(hash_data)
+    hex_digest = sha256.hexdigest()
+    
+    super_secret[hex_digest] = {
+      "uid": uid,
+      "validity": None # update later.
+    }
+    json_object = json.dumps(super_secret, indent=4)
+    with open("super_secret.json", "w") as outfile:
+      outfile.write(json_object)
+    # ----------------------
     return (c, c_text)
 
   def _GetCookie(self, cookie_name):
