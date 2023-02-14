@@ -416,12 +416,13 @@ class GruyereRequestHandler(BaseHTTPRequestHandler):
     # build new profile
     profile_data = {}
     uid = self._GetParameter(params, 'uid', cookie[COOKIE_UID])
+    _Log('USER ID IS -----> %s' % uid)
     newpw = self._GetParameter(params, 'pw')
     self._AddParameter('name', params, profile_data, uid)
     self._AddParameter('pw', params, profile_data)
-    self._AddParameter('is_author', params, profile_data)
-    self._AddParameter('is_admin', params, profile_data)
-    self._AddParameter('private_snippet', params, profile_data)
+    # self._AddParameter('is_author', params, profile_data)
+    # self._AddParameter('is_admin', params, profile_data)
+    # self._AddParameter('private_snippet', params, profile_data)
     self._AddParameter('icon', params, profile_data)
     self._AddParameter('web_site', params, profile_data)
     self._AddParameter('color', params, profile_data)
@@ -431,6 +432,17 @@ class GruyereRequestHandler(BaseHTTPRequestHandler):
     message = None
     new_cookie_text = None
     action = self._GetParameter(params, 'action')
+    # USER ID REGEX Check
+    import re
+    pattern = r"^[a-zA-Z0-9]+$"
+    regex = re.compile(pattern)
+    match = regex.match(uid)
+    
+    if match is None:
+      message = 'Invalid Character in username. Alphanumeric characters are acceptable only!'
+      return self._SendError(message, cookie, specials, params, new_cookie_text)
+    
+    
     if action == 'new':
       if uid in database:
         message = 'User already exists.'
