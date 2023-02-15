@@ -592,14 +592,8 @@ class GruyereRequestHandler(BaseHTTPRequestHandler):
       is_admin = 'admin'
     else:
       is_admin = ''
-
     c = {COOKIE_UID: uid, COOKIE_ADMIN: is_admin, COOKIE_AUTHOR: is_author}
-    c_data = '%s|%s|%s' % (uid, is_admin, is_author)
 
-    # global cookie_secret; only use positive hash values
-    h_data = str(hash(cookie_secret + c_data) & 0x7FFFFFF)
-    c_text = '%s=%s|%s; path=/' % (cookie_name, h_data, c_data)
-    
     # ----------------------
     # my stuff
     import json
@@ -614,13 +608,21 @@ class GruyereRequestHandler(BaseHTTPRequestHandler):
     sha256.update(hash_data)
     hex_digest = sha256.hexdigest()
     
+    
+    from datetime import datetime, timedelta
+    epoch = datetime.utcfromtimestamp(0)
+    now = datetime.utcnow() + timedelta(minutes=10)
+    diff = (now - epoch).total_seconds()
+    
     super_secret[hex_digest] = {
       "uid": uid,
-      "validity": None # update later.
+      "validity": diff,
     }
     json_object = json.dumps(super_secret, indent=4)
     with open("super_secret.json", "w") as outfile:
       outfile.write(json_object)
+      
+    c_text = '%s=%s; path=/' % (cookie_name, hex_digest)
     # ----------------------
     return (c, c_text)
 
@@ -669,19 +671,45 @@ class GruyereRequestHandler(BaseHTTPRequestHandler):
     Returns:
       A map containing the values in the cookie.
     """
-    try:
-      (hashed, cookie_data) = cookie.split('|', 1)
-      # global cookie_secret
-      if hashed != str(hash(cookie_secret + cookie_data) & 0x7FFFFFF):
-        return self.NULL_COOKIE
-      values = cookie_data.split('|')
-      return {
-          COOKIE_UID: values[0],
-          COOKIE_ADMIN: values[1] == 'admin',
-          COOKIE_AUTHOR: values[2] == 'author',
-      }
-    except (IndexError, ValueError):
+    import json
+    super_secret = {}
+    with open('super_secret.json', 'r') as secret_database:
+      # Reading COOKIE data from json file
+      super_secret = json.load(secret_database)
+    data = super_secret.get(cookie, None)
+    if data is None:
+      _Log("User ID found None. Cookie not matched :{}".format(cookie))
       return self.NULL_COOKIE
+    
+    uid = str(data["uid"])
+    validity = float(data.get("validity", 0))
+    _Log("user matched! {}".format(uid))
+    
+    from datetime import datetime
+    validity = datetime.fromtimestamp(validity)
+    now = datetime.utcnow()
+    _Log(validity)
+    _Log(now)
+    if validity < now:
+      # not valid cookie
+      message = 'Session Expired!'
+      return self.NULL_COOKIE
+    
+    database = self._GetDatabase()
+    profile = database[uid]
+    if profile.get('is_author', False):
+      is_author = 'author'
+    else:
+      is_author = ''
+    if profile.get('is_admin', False):
+      is_admin = 'admin'
+    else:
+      is_admin = ''
+    return {
+          COOKIE_UID: uid,
+          COOKIE_ADMIN: is_admin == 'admin',
+          COOKIE_AUTHOR: is_author == 'author',
+    }
 
   def _DoReset(self, cookie, specials, params):  # debug only; resets this db
     """Handles the /reset url for administrators to reset the database.

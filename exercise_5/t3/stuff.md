@@ -17,6 +17,8 @@ My solution for cookie creation is
 I will create a cryptographically secure hash from the text `username|admin|author`, anytime I will need to identify someone I will use this same technique
 
 I will hash it from the user_id and then figure out the rest. <_CreateCookie function> and <_ParseCookie function>
+CreatedCookie -> Wrote a new cookie function
+ParseCookie -> Used the new cookie function to parse cookie. [Validity not implemented.]
 
 and I will fix how new user is created. [DONE]
 
