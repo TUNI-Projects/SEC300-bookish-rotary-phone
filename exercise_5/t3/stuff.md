@@ -32,3 +32,11 @@ if match is None:
     message = 'Invalid Character in username. Alphanumeric characters are acceptable only!'
     return self._SendError(message, cookie, specials, params, new_cookie_text)
 ```
+
+## Cross-Site Request Forgery (XSRF)
+
+### XSRF Challenge
+
+## Cross Site Script Inclusion (XSSI)
+
+### XSSI Challenge
